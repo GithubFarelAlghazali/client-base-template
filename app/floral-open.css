@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@theme {
+	--font-fancy: var(--font-fancy);
+	--font-base: var(--font-base);
+	--color-primary: #e11d48;
+}
