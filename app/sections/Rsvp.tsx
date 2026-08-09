@@ -37,7 +37,6 @@ export default function Rsvp({ guestId }: { guestId: string }) {
       viewport={{ once: true, margin: "-100px" }}
       className="w-full h-screen bg-rose-950 text-white flex justify-center items-center flex-col gap-8 relative px-4 overflow-hidden"
     >
-      {/* Toast Notification Sukses */}
       <AnimatePresence>
         {showSuccessToast && (
           <motion.div
