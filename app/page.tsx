@@ -1,42 +1,12 @@
-import Cover from "./sections/Cover";
-import Header from "./sections/Header";
-import Quotes from "./sections/Quotes";
-import BrideBiography from "./sections/BrideBiography";
-import BrideStory from "./sections/BrideStory";
-import PhotoGallery from "./sections/PhotoGallery";
-import LocationDetail from "./sections/LocationDetail";
-import Countdown from "./sections/Countdown";
-import Rsvp from "./sections/Rsvp";
-import Donate from "./sections/Donate";
-import PrayForm from "./sections/PrayForm";
-import Footer from "./sections/Footer";
-import { brideInfo } from "./helpers/data";
-import ScrollLock from "./components/ScrollLock";
-import AudioPlayer from "./components/AudioPlayer";
+import { LiaUserLockSolid } from "react-icons/lia";
 
-export const metadata = {
-  title: `Wedding of ${brideInfo.man.nickname} & ${brideInfo.woman.nickname}`,
-};
-
-export default function TemplatePage() {
+export default async function Page() {
   return (
-    <ScrollLock>
-      <div className="font-base relative w-screen lg:w-2xl p-2 mx-auto">
-        <AudioPlayer />
-        <Cover>
-          <div className="bg-rose-50">
-            <Header />
-            <Quotes />
-            <BrideBiography />
-            <BrideStory />
-            <LocationDetail />
-            <Countdown />
-            <Donate />
-            <Rsvp />
-            <Footer />
-          </div>
-        </Cover>
-      </div>
-    </ScrollLock>
+    <main className="w-full h-screen flex flex-col gap-5 justify-center items-center">
+      <LiaUserLockSolid className="text-taupe-800 size-20" />
+      <h1 className="p-5 rounded-xl text-center bg-taupe-900 text-white shadow-xl">
+        ID tamu tidak valid
+      </h1>
+    </main>
   );
 }

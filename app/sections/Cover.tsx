@@ -7,34 +7,40 @@ import seal from "../assets/wax-seal.png";
 import Image from "next/image";
 import MyImg from "../components/MyImg";
 
-export default function Cover({ children }: { children: ReactNode }) {
+export default function Cover({
+  children,
+  guestName,
+}: {
+  children: ReactNode;
+  guestName: string;
+}) {
   // for preview needs. For production, uncomment the useEffect and const value on top
 
-  // const [isOpen, setOpen] = useState(false);
-  // const [mounted, setMounted] = useState(false);
-  const [isOpen, setOpen] = useState(() => getScrollable());
+  const [isOpen, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  // const [isOpen, setOpen] = useState(() => getScrollable());
   const [animStep, setAnimStep] = useState(0);
 
-  // useEffect(() => {
-  //   const alreadyOpen = getScrollable();
-  //   setOpen(alreadyOpen);
-  //   setMounted(true);
+  useEffect(() => {
+    const alreadyOpen = getScrollable();
+    setOpen(alreadyOpen);
+    setMounted(true);
 
-  //   if (alreadyOpen) {
-  //     setAnimStep(4);
-  //   }
-  // }, []);
+    if (alreadyOpen) {
+      setAnimStep(4);
+    }
+  }, []);
 
-  // if (!mounted) return null;
+  if (!mounted) return null;
 
   const handleOpen = () => {
     if (animStep > 0) return;
 
     setAnimStep(1);
-    // if (handleScrollable) {
-    //   setOpen(!isOpen);
-    //   handleScrollable(true);
-    // }
+    if (handleScrollable) {
+      setOpen(!isOpen);
+      handleScrollable(true);
+    }
     // uncomment when on prod
     setOpen(true);
 
@@ -126,7 +132,7 @@ export default function Cover({ children }: { children: ReactNode }) {
       </div>
       <div className="flex flex-col [&_span]:font-semibold text-center">
         Kepada Yth.
-        <span>Budi Ardiansyah</span>
+        <span>{guestName}</span>
       </div>
     </div>
   );
