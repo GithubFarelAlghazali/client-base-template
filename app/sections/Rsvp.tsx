@@ -7,13 +7,13 @@ import { motion } from "framer-motion";
 import corner1 from "../assets/flower-corner-2.png";
 import corner2 from "../assets/flower-corner-3.png";
 
-export default function Rsvp() {
+export default function Rsvp({ guestId }: { guestId: string }) {
   const [message, setMessage] = useState("");
   const [presence, setPresence] = useState("hadir");
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    handleRsvp(message, presence);
+    await handleRsvp(message, presence, guestId);
   };
 
   return (

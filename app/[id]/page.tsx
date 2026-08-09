@@ -47,7 +47,7 @@ export default async function TemplatePage({ params }: GuestProps) {
             <LocationDetail />
             <Countdown />
             <Donate />
-            <Rsvp />
+            <Rsvp guestId={guest.id} />
             <Footer />
           </div>
         </Cover>
