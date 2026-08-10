@@ -13,6 +13,10 @@ const fontBase = Bodoni_Moda({
   variable: "--font-base",
 });
 
+export const metadata = {
+  title: "Client KasiSlamat",
+};
+
 export default function MainLayout({
   children,
 }: {
