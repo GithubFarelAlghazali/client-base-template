@@ -38,39 +38,64 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="w-full h-screen flex justify-center items-center">
-      <form
-        onSubmit={handleSubmit}
-        className="p-12 rounded-md gap-5 shadow-xl flex flex-col *:flex-col *:flex [&_input]:focus:outline-none [&_input]:border-0 [&_input]:border-b [&_input]:border-b-taupe-700 [&_input]:rounded-none"
-      >
-        <label>
-          Email
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="text"
-            placeholder="Masukkan email terdaftar"
-          />
-        </label>
-        <label>
-          Password
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            placeholder="Masukkan password yang diberikan"
-          />
-        </label>
-        {error && <p>{error}</p>}
+    <main className="min-h-screen w-full bg-white flex items-center justify-center p-6 antialiased">
+      <div className="w-full md:w-md bg-white border border-stone-100 rounded-2xl p-8 sm:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-serif font-medium tracking-tight text-taupe-800">
+            Selamat Datang
+          </h1>
+          <p className="mt-1.5 text-xs text-stone-500 font-light">
+            Silakan masuk ke dashboard manajemen dengan email terdaftar dan
+            pantau kehadiran tamu Anda
+          </p>
+        </div>
 
-        <button
-          className="bg-taupe-700 text-taupe-100 w-full py-3 rounded-xl"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? "Memproses..." : "Login"}
-        </button>
-      </form>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium uppercase tracking-wider text-taupe-800/80">
+              Email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="nama@email.com"
+              required
+              className="w-full px-0 py-2.5 bg-transparent border-b border-stone-200 text-stone-800 placeholder-stone-300 text-sm transition-colors duration-200 focus:outline-none focus:border-taupe-800"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="block text-xs font-medium uppercase tracking-wider text-taupe-800/80">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              className="w-full px-0 py-2.5 bg-transparent border-b border-stone-200 text-stone-800 placeholder-stone-300 text-sm transition-colors duration-200 focus:outline-none focus:border-taupe-800"
+            />
+          </div>
+
+          {error && (
+            <div className="p-3 rounded-lg bg-rose-50/60 border border-rose-100 text-rose-700 text-xs text-center">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full mt-2 py-3 px-4 bg-taupe-800 hover:bg-taupe-800/90 text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-sm active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? "Memproses..." : "Masuk"}
+          </button>
+        </form>
+      </div>
     </main>
   );
 }
