@@ -60,9 +60,10 @@ async function main() {
 
   const hash = await bcrypt.hash(password, 10);
 
+  // DEVELOPMENT MODE ONLY
   // cari kemunculan $ lalu tambah backslash, mencegah NEXTJS ngerusak env
-  const escapedHash = hash.replace(/\$/g, "\\$");
-  upsertEnvVar(ENV_PATH, ENV_KEY, escapedHash);
+  // const escapedHash = hash.replace(/\$/g, "\\$");
+  // upsertEnvVar(ENV_PATH, ENV_KEY, escapedHash);
 
   console.log(`✅ ${ENV_KEY} berhasil ditulis ke ${ENV_PATH}`);
 }
