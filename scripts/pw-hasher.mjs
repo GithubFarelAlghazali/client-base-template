@@ -86,6 +86,9 @@ async function main() {
   console.log(
     "⚠️  Buat di-paste ke Vercel (Environment Variables), pakai versi RAW ini (TANPA backslash):",
   );
+  console.log(`ADMIN_PASSWORD_HASH=${hash}`);
+  console.log(`ADMIN_EMAIL=${email}`);
+  console.log(`JWT_SECRET=${jwtSecret}`);
 }
 
 main();

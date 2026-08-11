@@ -11,6 +11,20 @@ export async function POST(request: NextRequest) {
     // compare with env email & password
     const matchingEmail = email === process.env.ADMIN_EMAIL;
 
+    console.log("[DEBUG] matchingEmail:", matchingEmail);
+    console.log(
+      "[DEBUG] input email length:",
+      email?.length,
+      "| env ADMIN_EMAIL length:",
+      process.env.ADMIN_EMAIL?.length,
+    );
+    console.log(
+      "[DEBUG] env ADMIN_PASSWORD_HASH prefix:",
+      process.env.ADMIN_PASSWORD_HASH?.slice(0, 7),
+      "| length:",
+      process.env.ADMIN_PASSWORD_HASH?.length,
+    );
+
     const matchingPassword = matchingEmail
       ? await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH!)
       : false;
