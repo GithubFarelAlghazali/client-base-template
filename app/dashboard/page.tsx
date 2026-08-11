@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import guestList from "../helpers/guestList.json";
 import { brideInfo } from "../helpers/data";
-import { FaWhatsapp, FaTimes, FaEye } from "react-icons/fa";
+import { FaWhatsapp, FaTimes, FaEye, FaFilter } from "react-icons/fa";
 import updateWaSend from "./updateWaSend";
 
 interface Guest {
@@ -14,6 +14,8 @@ interface Guest {
   message: string;
   invitationStatus: string;
 }
+
+type FilterType = "semua" | "belum_dikirim" | "dikirim" | "hadir" | "absen";
 
 const sendWaInvitation = async (
   guestId: string,
@@ -55,11 +57,39 @@ ${brideInfo.man.nickname} & ${brideInfo.woman.nickname}`;
 
 export default function GuestDashboard() {
   const [selectedGuest, setSelectedGuest] = useState<Guest | null>(null);
+  const [filter, setFilter] = useState<FilterType>("semua");
 
   const truncateMessage = (text: string, length: number = 12) => {
     if (!text) return "-";
     return text.length > length ? `${text.slice(0, length)}...` : text;
   };
+
+  // Filter guest list dynamically
+  const filteredGuests = useMemo(() => {
+    return guestList.filter((guest: Guest) => {
+      if (filter === "belum_dikirim") {
+        return guest.invitationStatus !== "dikirim";
+      }
+      if (filter === "dikirim") {
+        return guest.invitationStatus === "dikirim";
+      }
+      if (filter === "hadir") {
+        return guest.presenceStatus?.toLowerCase() === "hadir";
+      }
+      if (filter === "absen") {
+        return guest.presenceStatus?.toLowerCase() === "absen";
+      }
+      return true;
+    });
+  }, [filter]);
+
+  const filterTabs: { id: FilterType; label: string }[] = [
+    { id: "semua", label: "Semua" },
+    { id: "belum_dikirim", label: "Belum Dikirim" },
+    { id: "dikirim", label: "Dikirim" },
+    { id: "hadir", label: "Hadir" },
+    { id: "absen", label: "Absen" },
+  ];
 
   return (
     <main className="min-h-screen bg-stone-50 text-stone-800 p-4 sm:p-6 md:p-10 font-sans antialiased">
@@ -70,172 +100,205 @@ export default function GuestDashboard() {
             <h1 className="text-xl sm:text-2xl font-serif font-semibold text-taupe-800 tracking-tight">
               Kelola Tamu Undangan
             </h1>
-            <p className="text-xs text-stone-500 mt-0.5 font-light">
-              Daftar tamu, status kehadiran, dan pengiriman undangan
-            </p>
           </div>
           <div className="text-xs text-stone-500 bg-white px-3 py-1.5 rounded-full border border-stone-200 self-start sm:self-auto shadow-sm">
-            Total Tamu:{" "}
+            Menampilkan:{" "}
             <span className="font-semibold text-taupe-800">
-              {guestList.length}
-            </span>
+              {filteredGuests.length}
+            </span>{" "}
+            / {guestList.length} Tamu
           </div>
         </header>
 
-        {/* Mobile View: Card List (visible below md breakpoint) */}
-        <div className="grid grid-cols-1 gap-3 md:hidden">
-          {guestList.map((guest: Guest, idx: number) => (
-            <div
-              key={guest.id || idx}
-              className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm space-y-3"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <span className="text-[10px] font-mono text-stone-400">
-                    #{idx + 1}
-                  </span>
-                  <h3 className="font-medium text-stone-900 text-sm">
-                    {guest.name}
-                  </h3>
-                  <p className="text-xs text-stone-500 font-mono mt-0.5">
-                    {guest.phone}
-                  </p>
-                </div>
-                <span
-                  className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-medium shrink-0 ${
-                    guest.presenceStatus === "hadir"
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                      : guest.presenceStatus === "absen"
-                        ? "bg-rose-50 text-rose-700 border border-rose-200/60"
-                        : "bg-amber-50 text-amber-700 border border-amber-200/60"
-                  }`}
-                >
-                  {guest.presenceStatus || "Belum Konfirmasi"}
-                </span>
-              </div>
-
-              <div className="text-xs text-stone-600 bg-stone-50 p-2.5 rounded-lg border border-stone-100">
-                <span className="font-medium text-stone-400 text-[10px] uppercase block mb-0.5">
-                  Pesan
-                </span>
-                {truncateMessage(guest.message, 24)}
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-1 border-t border-stone-100">
-                <button
-                  onClick={() => setSelectedGuest(guest)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs text-stone-600 bg-stone-100 hover:bg-stone-200/70 rounded-lg transition-colors font-medium"
-                >
-                  <FaEye className="w-3.5 h-3.5 text-stone-500" />
-                  <span>Detail</span>
-                </button>
-
-                {guest.invitationStatus === "dikirim" ? (
-                  <span className="inline-flex items-center px-3 py-1.5 text-xs text-stone-400 bg-stone-100 rounded-lg border border-stone-200/60">
-                    Terkirim
-                  </span>
-                ) : (
-                  <button
-                    onClick={() =>
-                      sendWaInvitation(guest.id, guest.name, guest.phone)
-                    }
-                    className="inline-flex items-center gap-1.5 bg-taupe-800 hover:bg-taupe-800/90 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm active:scale-95"
-                  >
-                    <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Kirim WA</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
+        {/* Filter Controls */}
+        <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-1 text-xs text-stone-400 mr-1 shrink-0">
+            <FaFilter className="w-3 h-3" />
+            <span>Filter:</span>
+          </div>
+          {filterTabs.map((tab) => {
+            const isActive = filter === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setFilter(tab.id)}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                  isActive
+                    ? "bg-taupe-800 text-white shadow-sm"
+                    : "bg-white text-stone-600 border border-stone-200 hover:bg-stone-100/70"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
+
+        {/* Empty State */}
+        {filteredGuests.length === 0 && (
+          <div className="bg-white border border-stone-200 rounded-2xl p-12 text-center text-stone-400 text-xs sm:text-sm">
+            Tidak ada tamu dengan status ini.
+          </div>
+        )}
+
+        {/* Mobile View: Card List (visible below md breakpoint) */}
+        {filteredGuests.length > 0 && (
+          <div className="grid grid-cols-1 gap-3 md:hidden">
+            {filteredGuests.map((guest: Guest, idx: number) => (
+              <div
+                key={guest.id || idx}
+                className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm space-y-3"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <span className="text-[10px] font-mono text-stone-400">
+                      #{idx + 1}
+                    </span>
+                    <h3 className="font-medium text-stone-900 text-sm">
+                      {guest.name}
+                    </h3>
+                    <p className="text-xs text-stone-500 font-mono mt-0.5">
+                      {guest.phone}
+                    </p>
+                  </div>
+                  <span
+                    className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-medium shrink-0 ${
+                      guest.presenceStatus === "hadir"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                        : guest.presenceStatus === "absen"
+                          ? "bg-rose-50 text-rose-700 border border-rose-200/60"
+                          : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                    }`}
+                  >
+                    {guest.presenceStatus || "Belum Konfirmasi"}
+                  </span>
+                </div>
+
+                <div className="text-xs text-stone-600 bg-stone-50 p-2.5 rounded-lg border border-stone-100">
+                  <span className="font-medium text-stone-400 text-[10px] uppercase block mb-0.5">
+                    Pesan
+                  </span>
+                  {truncateMessage(guest.message, 24)}
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-1 border-t border-stone-100">
+                  <button
+                    onClick={() => setSelectedGuest(guest)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 text-xs text-stone-600 bg-stone-100 hover:bg-stone-200/70 rounded-lg transition-colors font-medium"
+                  >
+                    <FaEye className="w-3.5 h-3.5 text-stone-500" />
+                    <span>Detail</span>
+                  </button>
+
+                  {guest.invitationStatus === "dikirim" ? (
+                    <span className="inline-flex items-center px-3 py-1.5 text-xs text-stone-400 bg-stone-100 rounded-lg border border-stone-200/60">
+                      Terkirim
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        sendWaInvitation(guest.id, guest.name, guest.phone)
+                      }
+                      className="inline-flex items-center gap-1.5 bg-taupe-800 hover:bg-taupe-800/90 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm active:scale-95"
+                    >
+                      <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Kirim WA</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Desktop View: Table (hidden below md breakpoint) */}
-        <div className="hidden md:block bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-stone-100/70 border-b border-stone-200 text-taupe-800 font-medium uppercase tracking-wider text-[11px]">
-                <tr>
-                  <th className="py-3.5 px-4 text-center">No.</th>
-                  <th className="py-3.5 px-4">Nama Tamu</th>
-                  <th className="py-3.5 px-4">No. Telp</th>
-                  <th className="py-3.5 px-4 text-center">Kehadiran</th>
-                  <th className="py-3.5 px-4">Pesan</th>
-                  <th className="py-3.5 px-4 text-center">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-100">
-                {guestList.map((guest: Guest, idx: number) => {
-                  return (
-                    <tr
-                      key={guest.id || idx}
-                      className="hover:bg-stone-50/80 transition-colors"
-                    >
-                      <td className="py-3.5 px-4 text-center text-stone-400 font-mono text-xs">
-                        {idx + 1}
-                      </td>
-                      <td className="py-3.5 px-4 font-medium text-stone-900">
-                        {guest.name}
-                      </td>
-                      <td className="py-3.5 px-4 text-stone-500 font-mono text-xs">
-                        {guest.phone}
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <span
-                          className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-medium ${
-                            guest.presenceStatus === "hadir"
-                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                              : guest.presenceStatus === "absen"
-                                ? "bg-rose-50 text-rose-700 border border-rose-200/60"
-                                : "bg-amber-50 text-amber-700 border border-amber-200/60"
-                          }`}
-                        >
-                          {guest.presenceStatus || "Belum Konfirmasi"}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-stone-600 max-w-[140px]">
-                        <span title={guest.message}>
-                          {truncateMessage(guest.message, 12)}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => setSelectedGuest(guest)}
-                            className="p-2 text-stone-500 hover:text-taupe-800 hover:bg-stone-100 rounded-lg transition-colors"
-                            title="Lihat Detail"
+        {filteredGuests.length > 0 && (
+          <div className="hidden md:block bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs sm:text-sm">
+                <thead className="bg-stone-100/70 border-b border-stone-200 text-taupe-800 font-medium uppercase tracking-wider text-[11px]">
+                  <tr>
+                    <th className="py-3.5 px-4 text-center">No.</th>
+                    <th className="py-3.5 px-4">Nama Tamu</th>
+                    <th className="py-3.5 px-4">No. Telp</th>
+                    <th className="py-3.5 px-4 text-center">Kehadiran</th>
+                    <th className="py-3.5 px-4">Pesan</th>
+                    <th className="py-3.5 px-4 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100">
+                  {filteredGuests.map((guest: Guest, idx: number) => {
+                    return (
+                      <tr
+                        key={guest.id || idx}
+                        className="hover:bg-stone-50/80 transition-colors"
+                      >
+                        <td className="py-3.5 px-4 text-center text-stone-400 font-mono text-xs">
+                          {idx + 1}
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-stone-900">
+                          {guest.name}
+                        </td>
+                        <td className="py-3.5 px-4 text-stone-500 font-mono text-xs">
+                          {guest.phone}
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <span
+                            className={`inline-block px-2.5 py-1 rounded-full text-[11px] font-medium ${
+                              guest.presenceStatus === "hadir"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                                : guest.presenceStatus === "absen"
+                                  ? "bg-rose-50 text-rose-700 border border-rose-200/60"
+                                  : "bg-amber-50 text-amber-700 border border-amber-200/60"
+                            }`}
                           >
-                            <FaEye className="w-4 h-4" />
-                          </button>
-
-                          {guest.invitationStatus === "dikirim" ? (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-stone-400 bg-stone-100 rounded-md border border-stone-200/60">
-                              Terkirim
-                            </span>
-                          ) : (
+                            {guest.presenceStatus || "Belum Konfirmasi"}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-stone-600 max-w-[140px]">
+                          <span title={guest.message}>
+                            {truncateMessage(guest.message, 12)}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-center">
+                          <div className="flex items-center justify-center gap-2">
                             <button
-                              onClick={() =>
-                                sendWaInvitation(
-                                  guest.id,
-                                  guest.name,
-                                  guest.phone,
-                                )
-                              }
-                              className="inline-flex items-center gap-1.5 bg-taupe-800 hover:bg-taupe-800/90 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm active:scale-95"
+                              onClick={() => setSelectedGuest(guest)}
+                              className="p-2 text-stone-500 hover:text-taupe-800 hover:bg-stone-100 rounded-lg transition-colors"
+                              title="Lihat Detail"
                             >
-                              <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400" />
-                              <span>Kirim</span>
+                              <FaEye className="w-4 h-4" />
                             </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+
+                            {guest.invitationStatus === "dikirim" ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-stone-400 bg-stone-100 rounded-md border border-stone-200/60">
+                                Terkirim
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() =>
+                                  sendWaInvitation(
+                                    guest.id,
+                                    guest.name,
+                                    guest.phone,
+                                  )
+                                }
+                                className="inline-flex items-center gap-1.5 bg-taupe-800 hover:bg-taupe-800/90 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-all shadow-sm active:scale-95"
+                              >
+                                <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400" />
+                                <span>Kirim</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Detail Modal Overlay */}
