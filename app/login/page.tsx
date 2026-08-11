@@ -43,12 +43,8 @@ export default function LoginPage() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-serif font-medium tracking-tight text-taupe-800">
-            Selamat Datang
+            Login ke Dashboard Tamu
           </h1>
-          <p className="mt-1.5 text-xs text-stone-500 font-light">
-            Silakan masuk ke dashboard manajemen dengan email terdaftar dan
-            pantau kehadiran tamu Anda
-          </p>
         </div>
 
         {/* Form */}
