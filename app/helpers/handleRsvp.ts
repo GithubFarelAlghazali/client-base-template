@@ -1,19 +1,14 @@
 "use server";
-import { writeJson } from "./writeJson";
+import { updateGuest } from "./sheetActions";
 
 export default async function handleRsvp(
   message: string,
   presence: string,
   guestId: string,
 ) {
-  const success = await writeJson(
-    "/app/helpers/guestList.json",
-    {
-      id: guestId,
-      presenceStatus: presence,
-      message,
-    },
-    "id",
-  );
+  const success = await updateGuest(guestId, {
+    presenceStatus: presence,
+    message: message,
+  });
   return success;
 }

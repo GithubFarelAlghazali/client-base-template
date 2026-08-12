@@ -13,8 +13,8 @@ import Footer from "../sections/Footer";
 import { brideInfo } from "../helpers/data";
 import ScrollLock from "../components/ScrollLock";
 import AudioPlayer from "../components/AudioPlayer";
-import guestList from "../helpers/guestList.json";
 import { redirect } from "next/navigation";
+import { getGuestList } from "../helpers/sheetActions";
 
 export const metadata = {
   title: `Wedding of ${brideInfo.man.nickname} & ${brideInfo.woman.nickname}`,
@@ -28,6 +28,7 @@ type GuestProps = {
 
 export default async function TemplatePage({ params }: GuestProps) {
   const { id } = await params;
+  const guestList = await getGuestList();
   const guest = guestList.find((g) => g.id === id);
 
   if (!guest) {

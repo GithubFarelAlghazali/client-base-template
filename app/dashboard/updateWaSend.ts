@@ -1,14 +1,9 @@
 "use server";
-import { writeJson } from "../helpers/writeJson";
+import { updateGuest } from "../helpers/sheetActions";
 
 export default async function updateWaSend(guestId: string) {
-  const success = await writeJson(
-    "/app/helpers/guestList.json",
-    {
-      id: guestId,
-      invitationStatus: "dikirim",
-    },
-    "id",
-  );
+  const success = await updateGuest(guestId, {
+    invitationStatus: "dikirim",
+  });
   return success;
 }
