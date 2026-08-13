@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Project Setup & Deployment Workflow
 
-## Getting Started
+### Phase 1: Repository Setup
 
-First, run the development server:
+1. Clone this repository into your `client-pages` folder (the directory containing all client repositories).
+2. Delete the repository history by running: `rm -rf .git`
+3. Navigate to the `kasislamat` repository (which contains the landing page).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Phase 2: Template Configuration
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open the `/app/templates` directory.
+5. Locate the specific template requested by the client.
+6. Copy the `/sections` and `/assets` folders from the template.
+7. Navigate back to your specific client folder and paste the copied folders.
+8. Update `/helpers/data.ts` with the information provided by the client.
+9. Replace the placeholder photos with the client's actual photos.
+10. Update the audio files according to the client's music request.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Phase 3: Database & Credentials Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+11. Create the Guests List on **Google Sheets** by copying the `Template-Guests List`.
+12. Share the spreadsheet by adding the **Google Sheets** client email (service account).
+13. Generate the password and email credentials by running: `node ./scripts/pw-hash.mjs <password> <email>`
+14. Create `GOOGLE_SHEETS_CLIENT_EMAIL` in `.env` and `.env.vercel`, and paste the value from `\Downloads\guest-book-db-505223-b23e9f587f3c.json` > `client_email`.
+15. Create `GOOGLE_SHEETS_PRIVATE_KEY` in `.env` and `.env.vercel`, and paste the value from `\Downloads\guest-book-db-505223-b23e9f587f3c.json` > `private_key`.
+16. Create `GOOGLE_SHEET_ID` in `.env` and `.env.vercel`, and paste the value from your **Google Sheets** ID (found in the URL between `/d/` and `/edit`).
 
-## Learn More
+### Phase 4: Development & Version Control
 
-To learn more about Next.js, take a look at the following resources:
+17. Install dependencies and start the development environment by running: `pnpm install`
+18. Adjust the layout, customize the design, and fix any bugs.
+19. Navigate back to the parent folder (the `client-pages` directory).
+20. Stage, commit, and push your changes by running: `git add .` (followed by your commit and push commands).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Phase 5: Review, Deployment, & Delivery
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+21. Send the invitation draft to the client for their review.
+22. Deploy the project to **Vercel**.
+23. Wait for payment confirmation from the client.
+24. Update the **Vercel** domain with the designated subdomain from `kasislamat.my.id`.
+25. Add the necessary DNS records on **hPanel**.
+26. Hand over the final, live invitation link to the client.
